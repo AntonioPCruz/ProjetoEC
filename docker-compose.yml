@@ -1,0 +1,30 @@
+services:
+  app:
+    build: .
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    env_file: .env
+    depends_on:
+      - db_sql
+      - db_nosql
+      - db_vector
+
+  db_sql:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${SQL_USER}
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_DB: ${SQL_DB}
+
+
+  db_nosql:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+
+  db_vector:
+    image: chromadb/chroma:latest
+    environment:
+      - CHROMA_DB_PATH=${VECTOR_DB_PATH}

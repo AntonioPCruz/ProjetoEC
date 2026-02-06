@@ -1,0 +1,10 @@
+streamlit
+
+pandas
+
+psycopg2-binary  
+pymongo          
+chromadb      
+
+python-dotenv 
+flake8              
