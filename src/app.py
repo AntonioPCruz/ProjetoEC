@@ -103,8 +103,6 @@ def chat_page():
         st.rerun()
 
 
-
-
 # Router
 
 if st.session_state.page == "landing":
