@@ -1,3 +1,40 @@
+# Ambientes Virtuais e Dependências
+venv/
+.venv/
+env/
+bin/
+lib/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.installed.cfg
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Variáveis de Ambiente e Segredos
+.env
+.env.local
+.env.*.local
+.flaskenv
+
+# Caches do Python e do IDE
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.vscode/
+.idea/
+
+# Docker
+.docker/
 # Python bytecode
 __pycache__/
 *.pyc
