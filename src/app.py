@@ -1,7 +1,8 @@
-from PIL import Image
 import streamlit as st
 from dotenv import load_dotenv
-from utils.db_connection import test_sql, test_nosql, test_vector
+from PIL import Image
+
+from utils.db_connection import test_nosql, test_sql, test_vector
 
 load_dotenv()
 
