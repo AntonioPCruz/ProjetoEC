@@ -8,11 +8,7 @@ load_dotenv()
 
 # Configuração geral
 
-st.set_page_config(
-    page_title="DrHouseGPT",
-    page_icon="💉",
-    layout="centered"
-)
+st.set_page_config(page_title="DrHouseGPT", page_icon="💉", layout="centered")
 
 if "page" not in st.session_state:
     st.session_state.page = "landing"
@@ -22,6 +18,7 @@ if "messages" not in st.session_state:
 
 
 # Landing Page
+
 
 def landing_page():
     st.title("DrHouseGPT")
@@ -39,8 +36,7 @@ def landing_page():
         st.session_state.page = "chat"
         st.rerun()
 
-
-# Expander com os testes de status
+    # Expander com os testes de status
 
     with st.expander("⚙️ Estado do sistema"):
         st.header("Status da Infraestrutura")
@@ -67,6 +63,7 @@ def landing_page():
 
 # Página de Chat
 
+
 def chat_page():
     st.title("👨🏻‍⚕️ DrHouseGPT")
 
@@ -79,9 +76,7 @@ def chat_page():
 
     # Input do utilizador
     if prompt := st.chat_input("Escreve aqui..."):
-        st.session_state.messages.append(
-            {"role": "user", "content": prompt}
-        )
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
         with st.chat_message("user"):
             st.markdown(prompt)
@@ -89,9 +84,7 @@ def chat_page():
         # ---- Aqui entra a lógica do chatbot (mock por agora) ----
         response = f"Recebi a tua mensagem: **{prompt}**"
 
-        st.session_state.messages.append(
-            {"role": "assistant", "content": response}
-        )
+        st.session_state.messages.append({"role": "assistant", "content": response})
 
         with st.chat_message("assistant"):
             st.markdown(response)

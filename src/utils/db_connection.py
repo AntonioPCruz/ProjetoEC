@@ -12,7 +12,7 @@ def test_sql():
             database=os.getenv("SQL_DB"),
             user=os.getenv("SQL_USER"),
             password=os.getenv("SQL_PASSWORD"),
-            connect_timeout=3
+            connect_timeout=3,
         )
         conn.close()
         return True
@@ -26,9 +26,9 @@ def test_nosql():
             host=os.getenv("MONGO_HOST"),
             username=os.getenv("MONGO_USER"),
             password=os.getenv("MONGO_PASSWORD"),
-            serverSelectionTimeoutMS=3000
+            serverSelectionTimeoutMS=3000,
         )
-        client.admin.command('ping')
+        client.admin.command("ping")
         return True
     except Exception:
         return False
@@ -36,8 +36,9 @@ def test_nosql():
 
 def test_vector():
     try:
-        client = chromadb.HttpClient(host=os.getenv("VECTOR_HOST"),
-                                     port=int(os.getenv("VECTOR_PORT")))
+        client = chromadb.HttpClient(
+            host=os.getenv("VECTOR_HOST"), port=int(os.getenv("VECTOR_PORT"))
+        )
         client.heartbeat()
         return True
     except Exception:

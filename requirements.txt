@@ -6,5 +6,5 @@ psycopg2-binary
 pymongo          
 chromadb      
 
-python-dotenv 
-flake8              
+python-dotenv  
+ruff
