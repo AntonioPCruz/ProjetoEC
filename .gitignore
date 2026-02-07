@@ -35,3 +35,16 @@ __pycache__/
 
 # Docker
 .docker/
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Pytest / Ruff caches
+.pytest_cache/
+.ruff_cache/
+
+# Packaging / editable installs
+*.egg-info/
+dist/
+build/
+
