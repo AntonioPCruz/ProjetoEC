@@ -1,6 +1,9 @@
 streamlit
 
 pandas
+selenium 
+webdriver-manager
+requests
 
 psycopg2-binary  
 pymongo          
