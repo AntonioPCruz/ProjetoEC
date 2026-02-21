@@ -54,3 +54,34 @@ CREATE TABLE IF NOT EXISTS global_health_stats (
     -- Unique constraint para evitar duplicados se correres o script várias vezes
     UNIQUE(country, year, disease_name, age_group, gender)
 );
+
+
+-- Dataset WUENIC
+
+
+CREATE TABLE IF NOT EXISTS country_dim (
+    id SERIAL PRIMARY KEY,
+    iso_code VARCHAR(3) UNIQUE NOT NULL,
+    country_name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS vaccine_dim (
+    id SERIAL PRIMARY KEY,
+    vaccine_code TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS immunization_fact (
+    id BIGSERIAL PRIMARY KEY,
+    country_id INT REFERENCES country_dim(id),
+    vaccine_id INT REFERENCES vaccine_dim(id),
+    year INT NOT NULL,
+    wuenic_coverage NUMERIC(5,2),
+    administrative_coverage NUMERIC(5,2),
+    children_vaccinated BIGINT,
+    children_target BIGINT,
+    births_unpd BIGINT,
+    surviving_infants BIGINT,
+    calculated_coverage NUMERIC(5,2),
+    anomaly_flag BOOLEAN DEFAULT FALSE,
+    UNIQUE(country_id, vaccine_id, year)
+);
