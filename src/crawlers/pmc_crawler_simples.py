@@ -14,7 +14,7 @@ os.makedirs(PDF_FOLDER, exist_ok=True)
 urls = [
     "https://www.who.int/news-room/fact-sheets/detail/physical-activity",
     "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
-    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8051856/",  
+    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8051856/",
     "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6990290/",
 ]
 
