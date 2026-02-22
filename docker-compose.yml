@@ -24,6 +24,8 @@ services:
 
   db_nosql:
     image: mongo:latest
+    ports:
+      - "27017:27017"  # expose so you can run api_ingestion from host with MONGO_HOST=localhost
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}

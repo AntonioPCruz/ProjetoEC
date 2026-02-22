@@ -13,4 +13,7 @@ pymongo
 chromadb      
 sentence-transformers
 python-dotenv  
+
+python-dotenv
+requests
 ruff
