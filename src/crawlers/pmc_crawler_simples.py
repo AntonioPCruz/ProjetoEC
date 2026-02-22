@@ -1,10 +1,11 @@
-import os
 import json
-import time
+import os
 import random
+import time
+from datetime import datetime
+
 import requests
 import trafilatura
-from datetime import datetime
 
 PDF_FOLDER = "pdfs_medicina_preventiva"
 os.makedirs(PDF_FOLDER, exist_ok=True)
@@ -13,9 +14,10 @@ os.makedirs(PDF_FOLDER, exist_ok=True)
 urls = [
     "https://www.who.int/news-room/fact-sheets/detail/physical-activity",
     "https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight",
-    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8051856/",  #Global Perspectives on Improving Chronic Disease Prevention and Management in Diverse Settings
-    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6990290/"
+    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8051856/",  
+    "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6990290/",
 ]
+
 
 def download_pdf(url, save_folder=PDF_FOLDER):
     """Baixa PDF se URL terminar em .pdf"""
@@ -33,6 +35,7 @@ def download_pdf(url, save_folder=PDF_FOLDER):
         print(f"Erro ao baixar PDF {url}: {e}")
     return None
 
+
 def extract_text_from_url(url):
     """Extrai texto limpo de HTML"""
     try:
@@ -43,6 +46,7 @@ def extract_text_from_url(url):
     except Exception as e:
         print(f"Erro ao extrair HTML {url}: {e}")
     return ""
+
 
 def crawl_medicina_preventiva(urls, keyword="medicina preventiva"):
     results = []
@@ -55,6 +59,7 @@ def crawl_medicina_preventiva(urls, keyword="medicina preventiva"):
             pdf_file = download_pdf(url)
             if pdf_file:
                 import fitz
+
                 doc = fitz.open(pdf_file)
                 for page in doc:
                     text += page.get_text() + "\n\n"
@@ -68,18 +73,20 @@ def crawl_medicina_preventiva(urls, keyword="medicina preventiva"):
             "source_url": url,
             "keyword": keyword,
             "text": text,
-            "data_crawling": datetime.now().isoformat()
+            "data_crawling": datetime.now().isoformat(),
         }
         print(f" Extraído {len(text)} caracteres")
         results.append(result)
-        time.sleep(random.uniform(2,5))
+        time.sleep(random.uniform(2, 5))
     return results
+
 
 def main():
     data = crawl_medicina_preventiva(urls)
     with open("medicina_preventiva_fulltext.json", "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"\n Guardado {len(data)} documentos em medicina_preventiva_fulltext.json")
+
 
 if __name__ == "__main__":
     main()

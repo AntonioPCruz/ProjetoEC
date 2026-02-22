@@ -1,18 +1,17 @@
-import requests
 import json
 import time
 from datetime import datetime
+
+import requests
 from lxml import etree
 from tqdm import tqdm
-
-
 
 PMC_QUERIES = [
     "preventive medicine[MeSH Terms]",
     "disease prevention[MeSH Terms]",
     "public health[MeSH Terms]",
     "mass screening[MeSH Terms]",
-    "health promotion[MeSH Terms]"
+    "health promotion[MeSH Terms]",
 ]
 
 MAX_RESULTS_PER_QUERY = 10
@@ -29,19 +28,14 @@ MEDICAL_KEYWORDS = [
     "chronic disease",
     "population health",
     "primary prevention",
-    "secondary prevention"
+    "secondary prevention",
 ]
 
 
 def search_pmc(query, max_results=10):
     url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 
-    params = {
-        "db": "pmc",
-        "term": query,
-        "retmax": max_results,
-        "retmode": "json"
-    }
+    params = {"db": "pmc", "term": query, "retmax": max_results, "retmode": "json"}
 
     r = requests.get(url, params=params, timeout=30)
     data = r.json()
@@ -52,11 +46,7 @@ def search_pmc(query, max_results=10):
 def fetch_pmc_xml(pmc_id):
     url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
-    params = {
-        "db": "pmc",
-        "id": pmc_id,
-        "retmode": "xml"
-    }
+    params = {"db": "pmc", "id": pmc_id, "retmode": "xml"}
 
     r = requests.get(url, params=params, timeout=30)
 
@@ -109,7 +99,6 @@ def is_medical_article(title, abstract):
     return False
 
 
-
 def crawl_pmc_medical():
     records = []
     seen = set()
@@ -143,7 +132,7 @@ def crawl_pmc_medical():
                 "text": text,
                 "mesh_query": query,
                 "source_url": f"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{pmc_id}/",
-                "data_crawling": datetime.now().isoformat()
+                "data_crawling": datetime.now().isoformat(),
             }
 
             records.append(record)
