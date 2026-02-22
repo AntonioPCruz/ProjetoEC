@@ -55,5 +55,3 @@ def get_db_connection():
         user=os.getenv("SQL_USER"),
         password=os.getenv("SQL_PASSWORD"),
     )
-
-

@@ -1,28 +1,23 @@
 import pandas as pd
-from sqlalchemy import text
 from db_connection import get_db_connection
+from sqlalchemy import text
+
 
 def clean_wuenic_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
-    df = df.drop(columns=[
-        "Comment",
-        "WUENICPreviousRevision",
-        "GovernmentEstimate"
-    ], errors="ignore")
+    df = df.drop(
+        columns=["Comment", "WUENICPreviousRevision", "GovernmentEstimate"], errors="ignore"
+    )
 
     df = df.dropna(subset=["Country", "Vaccine", "Year"])
 
     df["Country"] = df["Country"].str.strip().str.upper()
     df["Vaccine"] = df["Vaccine"].str.strip().str.upper()
 
-    df["calculated_coverage"] = (
-        df["ChildrenVaccinated"] / df["ChildrenInTarget"]
-    ) * 100
+    df["calculated_coverage"] = (df["ChildrenVaccinated"] / df["ChildrenInTarget"]) * 100
 
-    df["anomaly_flag"] = (
-        abs(df["calculated_coverage"] - df["WUENIC"]) > 5
-    )
+    df["anomaly_flag"] = abs(df["calculated_coverage"] - df["WUENIC"]) > 5
 
     df = df.drop_duplicates(subset=["Country", "Vaccine", "Year"])
 
@@ -35,28 +30,34 @@ def ingest_wuenic(filepath: str):
     df = clean_wuenic_data(df)
 
     with engine.begin() as conn:
-
         # Insert countries
         countries = df[["ISOCountryCode", "Country"]].drop_duplicates()
         for _, row in countries.iterrows():
-            conn.execute(text("""
+            conn.execute(
+                text("""
                 INSERT INTO country_dim (iso_code, country_name)
                 VALUES (:iso, :name)
                 ON CONFLICT (iso_code) DO NOTHING
-            """), {"iso": row["ISOCountryCode"], "name": row["Country"]})
+            """),
+                {"iso": row["ISOCountryCode"], "name": row["Country"]},
+            )
 
         # Insert vaccines
         vaccines = df[["Vaccine"]].drop_duplicates()
         for _, row in vaccines.iterrows():
-            conn.execute(text("""
+            conn.execute(
+                text("""
                 INSERT INTO vaccine_dim (vaccine_code)
                 VALUES (:code)
                 ON CONFLICT (vaccine_code) DO NOTHING
-            """), {"code": row["Vaccine"]})
+            """),
+                {"code": row["Vaccine"]},
+            )
 
         # Insert fact records
         for _, row in df.iterrows():
-            conn.execute(text("""
+            conn.execute(
+                text("""
                 INSERT INTO immunization_fact (
                     country_id,
                     vaccine_id,
@@ -84,19 +85,22 @@ def ingest_wuenic(filepath: str):
                     :flag
                 )
                 ON CONFLICT DO NOTHING
-            """), {
-                "iso": row["ISOCountryCode"],
-                "vac": row["Vaccine"],
-                "year": int(row["Year"]),
-                "wuenic": row.get("WUENIC"),
-                "admin": row.get("AdministrativeCoverage"),
-                "vaccinated": row.get("ChildrenVaccinated"),
-                "target": row.get("ChildrenInTarget"),
-                "births": row.get("BirthsUNPD"),
-                "surviving": row.get("SurvivingInfantsUNPD"),
-                "calc": row.get("calculated_coverage"),
-                "flag": row.get("anomaly_flag"),
-            })
+            """),
+                {
+                    "iso": row["ISOCountryCode"],
+                    "vac": row["Vaccine"],
+                    "year": int(row["Year"]),
+                    "wuenic": row.get("WUENIC"),
+                    "admin": row.get("AdministrativeCoverage"),
+                    "vaccinated": row.get("ChildrenVaccinated"),
+                    "target": row.get("ChildrenInTarget"),
+                    "births": row.get("BirthsUNPD"),
+                    "surviving": row.get("SurvivingInfantsUNPD"),
+                    "calc": row.get("calculated_coverage"),
+                    "flag": row.get("anomaly_flag"),
+                },
+            )
+
 
 if __name__ == "__main__":
     ingest_wuenic("data/wuenic_input.xlsx")
