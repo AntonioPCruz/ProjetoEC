@@ -6,5 +6,6 @@ psycopg2-binary
 pymongo          
 chromadb      
 
-python-dotenv  
+python-dotenv
+requests
 ruff
