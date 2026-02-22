@@ -19,3 +19,11 @@ Para validar a conformidade do código com as normas PEP8 através do container 
 ```console
 docker-compose run app flake8 .
 ```
+
+## Integração do dataset WUENIC
+
+Para ingerir o dataset WUENIC:
+
+```bash
+python -c "from utils.ingest_wuenic import ingest_wuenic; ingest_wuenic('path_to_excel.xlsx')"
+```
