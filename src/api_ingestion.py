@@ -20,6 +20,7 @@ GHO_BASE_URL = "https://ghoapi.azureedge.net/api"
 COLLECTION_INDICATORS = "gho_indicators"
 COLLECTION_DIMENSIONS = "gho_dimensions"
 
+
 def _mongo_config():
     """Return current MongoDB config (password masked) for debugging."""
     return {
