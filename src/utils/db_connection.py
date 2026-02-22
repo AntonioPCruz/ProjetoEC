@@ -44,3 +44,14 @@ def test_vector():
         return True
     except Exception:
         return False
+
+
+# --- Funções de Conexão ---
+def get_db_connection():
+    """Retorna uma conexão com a base de dados PostgreSQL"""
+    return psycopg2.connect(
+        host=os.getenv("SQL_HOST"),
+        database=os.getenv("SQL_DB"),
+        user=os.getenv("SQL_USER"),
+        password=os.getenv("SQL_PASSWORD"),
+    )
