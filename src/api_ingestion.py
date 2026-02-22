@@ -7,10 +7,9 @@ import os
 import sys
 
 import requests
-from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError, OperationFailure
-
 from dotenv import load_dotenv
+from pymongo import MongoClient
+from pymongo.errors import OperationFailure, ServerSelectionTimeoutError
 
 load_dotenv()
 
