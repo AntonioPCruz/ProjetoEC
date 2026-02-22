@@ -4,10 +4,13 @@ pandas
 selenium 
 webdriver-manager
 requests
+lxml
+trafilatura
+tqdm
 
 psycopg2-binary  
 pymongo          
 chromadb      
-
+sentence-transformers
 python-dotenv  
 ruff
