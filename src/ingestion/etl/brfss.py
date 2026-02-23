@@ -1,12 +1,14 @@
+"""ETL do inquérito BRFSS: CSV para a tabela PostgreSQL brfss_responses."""
+
 import os
 
 import numpy as np
 import pandas as pd
-from db_connection import get_db_connection
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values
 
-# Carregar variáveis de ambiente
+from db_connection import get_db_connection
+
 load_dotenv()
 
 
@@ -15,11 +17,11 @@ def ingest_brfss(csv_path):
         print(f"Erro: O ficheiro {csv_path} não foi encontrado.")
         return
 
-    print("A carregar dataset BRFSS... (isto pode demorar dependendo do tamanho)")
+    print("A carregar o dataset BRFSS... (isto pode demorar, consoante o tamanho)")
     # low_memory=False é importante devido à mistura de tipos nas centenas de colunas
     df = pd.read_csv(csv_path, low_memory=False)
 
-    # Mapeamento completo baseado no teu schema de diagnósticos e indicadores
+    # Mapeamento completo baseado no teu esquema de diagnósticos e indicadores
     cols_map = {
         "_state": "state_code",
         "seqno": "sequence_no",
@@ -83,8 +85,8 @@ def ingest_brfss(csv_path):
 
     columns = list(df_final.columns)
     insert_query = f"""
-        INSERT INTO brfss_responses ({", ".join(columns)}) 
-        VALUES %s 
+        INSERT INTO brfss_responses ({", ".join(columns)})
+        VALUES %s
         ON CONFLICT (sequence_no) DO NOTHING
     """
 

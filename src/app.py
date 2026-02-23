@@ -1,13 +1,17 @@
+"""Ponto de entrada da aplicação Streamlit DrHouseGPT."""
+
+from pathlib import Path
+
 import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
 
-from utils.db_connection import test_nosql, test_sql, test_vector
+from db_connection import test_nosql, test_sql, test_vector
 
 load_dotenv()
 
-
-# Configuração geral
+# Recursos estáticos em src/assets/
+ASSETS_DIR = Path(__file__).resolve().parent / "assets"
 
 st.set_page_config(page_title="DrHouseGPT", page_icon="💉", layout="centered")
 
@@ -18,26 +22,25 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 
-# Landing Page
-
-
 def landing_page():
     st.title("DrHouseGPT")
     st.subheader("Um chatbot inteligente para diagnosticar doenças e outras mazelas")
-    image = Image.open("src/assets/Dr.House_S4E3_15.png")
-    st.image(image, use_container_width=True)
+    image_path = ASSETS_DIR / "Dr.House_S4E3_15.png"
+    if image_path.exists():
+        image = Image.open(image_path)
+        st.image(image, use_container_width=True)
+    else:
+        st.caption("(Imagem não encontrada)")
 
     st.markdown(
         """
-        O uso deste chatbot não substitui a consulta de um médico a sério.
+        O uso deste chatbot não substitui a consulta de um médico de verdade.
         """
     )
 
     if st.button("💬 Conversar com o DrHouseGPT", use_container_width=True):
         st.session_state.page = "chat"
         st.rerun()
-
-    # Expander com os testes de status
 
     with st.expander("⚙️ Estado do sistema"):
         st.header("Status da Infraestrutura")
@@ -62,20 +65,15 @@ def landing_page():
                 st.warning("Vetorial - Offline ou em Setup")
 
 
-# Página de Chat
-
-
 def chat_page():
     st.title("👨🏻‍⚕️ DrHouseGPT")
 
     st.caption("Escreve uma mensagem para iniciar a conversa")
 
-    # Mostrar histórico
     for msg in st.session_state.messages:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
 
-    # Input do utilizador
     if prompt := st.chat_input("Escreve aqui..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
 
@@ -96,8 +94,6 @@ def chat_page():
         st.session_state.page = "landing"
         st.rerun()
 
-
-# Router
 
 if st.session_state.page == "landing":
     landing_page()

@@ -1,3 +1,5 @@
+"""Crawler simples PMC/OMS usando o trafilatura para extração de texto integral."""
+
 import json
 import os
 import random

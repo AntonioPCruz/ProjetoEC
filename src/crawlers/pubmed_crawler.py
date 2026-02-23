@@ -1,3 +1,5 @@
+"""Crawler PubMed para artigos de medicina preventiva."""
+
 import json
 import os
 import re
@@ -11,8 +13,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 
-# --- Pastas de output ---
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "data")
+# Diretório de saída: raiz do projeto / data (a partir de src/crawlers/)
+_OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data")
+OUTPUT_DIR = _OUTPUT_DIR
 JSON_PATH = os.path.join(OUTPUT_DIR, "dataset_pubmed_preventive.json")
 
 # --- Termos de pesquisa focados em medicina preventiva ---

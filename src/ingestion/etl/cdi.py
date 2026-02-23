@@ -1,8 +1,11 @@
+"""ETL dos Chronic Disease Indicators (CDI): CSV para a tabela PostgreSQL chronic_disease_indicators."""
+
 import numpy as np
 import pandas as pd
-from db_connection import get_db_connection
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values
+
+from db_connection import get_db_connection
 
 load_dotenv()
 

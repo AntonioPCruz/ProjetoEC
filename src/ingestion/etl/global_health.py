@@ -1,13 +1,13 @@
+"""ETL de estatísticas de saúde global: CSV para a tabela PostgreSQL global_health_stats."""
+
 import os
 
 import pandas as pd
-
-# Importas a tua utilidade de conexão que já existe
-from db_connection import get_db_connection
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values
 
-# 1. Carregar o .env (podes manter o caminho relativo para ser mais flexível)
+from db_connection import get_db_connection
+
 load_dotenv()
 
 
@@ -20,7 +20,6 @@ def ingest_global_stats(csv_path):
     df = pd.read_csv(csv_path)
 
     # 3. Mapear as colunas do CSV para os nomes da tabela SQL
-    # Isto garante que os nomes com % ou espaços não quebrem a query
     columns_map = {
         "Country": "country",
         "Year": "year",
@@ -52,15 +51,13 @@ def ingest_global_stats(csv_path):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Prepara a query com ON CONFLICT para evitar erros se correrem o script 2 vezes
     cols = ", ".join(df.columns)
     insert_query = f"""
-        INSERT INTO global_health_stats ({cols}) 
-        VALUES %s 
+        INSERT INTO global_health_stats ({cols})
+        VALUES %s
         ON CONFLICT (country, year, disease_name, age_group, gender) DO NOTHING
     """
 
-    # Converte o DataFrame para uma lista de tuplos para uma inserção rápida
     data_tuples = [tuple(x) for x in df.to_numpy()]
 
     try:
@@ -76,6 +73,5 @@ def ingest_global_stats(csv_path):
 
 
 if __name__ == "__main__":
-    # Caminho correto do CSV
     csv_path = "/Users/matildefernandes/Desktop/PEC/Global Health Statistics.csv"
     ingest_global_stats(csv_path)

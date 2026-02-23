@@ -1,3 +1,5 @@
+"""Funções de ligação e verificação de saúde para bases de dados SQL, NoSQL e vetoriais."""
+
 import os
 
 import chromadb
@@ -5,8 +7,11 @@ import psycopg2
 from pymongo import MongoClient
 
 
-# --- Testes de Conexão ---
+# --- Verificações de saúde das ligações ---
+
+
 def test_sql():
+    """Verifica a ligação ao PostgreSQL. Devolve True em caso de sucesso."""
     try:
         conn = psycopg2.connect(
             host=os.getenv("SQL_HOST"),
@@ -22,6 +27,7 @@ def test_sql():
 
 
 def test_nosql():
+    """Verifica a ligação ao MongoDB. Devolve True se o ping for bem‑sucedido."""
     try:
         client = MongoClient(
             host=os.getenv("MONGO_HOST"),
@@ -36,6 +42,7 @@ def test_nosql():
 
 
 def test_vector():
+    """Verifica a ligação ao ChromaDB (base vetorial). Devolve True se o heartbeat tiver sucesso."""
     try:
         client = chromadb.HttpClient(
             host=os.getenv("VECTOR_HOST"), port=int(os.getenv("VECTOR_PORT"))
@@ -46,9 +53,11 @@ def test_vector():
         return False
 
 
-# --- Funções de Conexão ---
+# --- Fábricas de ligações ---
+
+
 def get_db_connection():
-    """Retorna uma conexão com a base de dados PostgreSQL"""
+    """Devolve uma ligação à base de dados PostgreSQL."""
     return psycopg2.connect(
         host=os.getenv("SQL_HOST"),
         database=os.getenv("SQL_DB"),

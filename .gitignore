@@ -1,50 +1,52 @@
-# Ambientes Virtuais e Dependências
+# Ambientes virtuais
 venv/
 .venv/
 env/
 bin/
 lib/
 develop-eggs/
-dist/
-downloads/
-eggs/
+*.egg-info/
+*.egg
 .installed.cfg
+eggs/
 parts/
 sdist/
 var/
 wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+dist/
+downloads/
+build/
 
-# Variáveis de Ambiente e Segredos
+# Variáveis de ambiente e segredos
 .env
 .env.local
 .env.*.local
 .flaskenv
 
-# Caches do Python e do IDE
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# IDE / Editor
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
 # Docker
 .docker/
-# Python bytecode
-__pycache__/
-*.pyc
 
-# Pytest / Ruff caches
-.pytest_cache/
-.ruff_cache/
-
-# Packaging / editable installs
-*.egg-info/
-dist/
-build/
-
+# Dados locais e ficheiros gerados (opcional)
+data/
+*.csv
+*.xlsx
+pdfs_medicina_preventiva/
+medicina_preventiva_fulltext.json
+pmc_preventive_medicine_clean.json
+dataset_pubmed_preventive.json

@@ -1,3 +1,5 @@
+"""Crawler PMC (PubMed Central) para artigos de medicina preventiva via NCBI E‑utils."""
+
 import json
 import time
 from datetime import datetime

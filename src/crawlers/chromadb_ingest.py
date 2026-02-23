@@ -1,15 +1,17 @@
+"""Ingestão de artigos JSON (PMC/PubMed) para o ChromaDB com embeddings."""
+
 import json
 import os
 
 import chromadb
 from sentence_transformers import SentenceTransformer
 
-# Ficheiros
-DATA_DIR = "../../data"
+# Diretório de dados: raiz do projeto / data (a partir de src/crawlers/)
+_THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(_THIS_DIR, "..", "..", "data")
 JSON_FILES = ["pmc_simples.json", "pmc_preventive_medicine_clean.json"]
 
 
-# Chunking
 def chunk_text(text, size=800, overlap=200):
     chunks = []
     start = 0
@@ -20,7 +22,7 @@ def chunk_text(text, size=800, overlap=200):
     return chunks
 
 
-# Coleção e embedding
+# Coleção e modelo de embeddings
 COLLECTION_NAME = "pmc_medicine_preventive"
 embbeding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 
@@ -34,7 +36,7 @@ if COLLECTION_NAME in [c.name for c in client.list_collections()]:
 collection = client.get_or_create_collection(name=COLLECTION_NAME)
 
 
-# Carregar Ficheiros
+# Carregar ficheiros JSON
 all_articles = []
 for file in JSON_FILES:
     path = os.path.join(DATA_DIR, file)
@@ -49,7 +51,7 @@ for file in JSON_FILES:
 print(f"Loaded {len(all_articles)} total articles")
 
 
-# Preparar para guardar no ChromaDB
+# Preparar documentos para guardar no ChromaDB
 documents = []
 metadatas = []
 ids = []

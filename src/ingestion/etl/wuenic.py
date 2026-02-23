@@ -1,6 +1,9 @@
+"""ETL de dados de imunização WUENIC: Excel para PostgreSQL (country_dim, vaccine_dim, immunization_fact)."""
+
 import pandas as pd
-from db_connection import get_db_connection
 from sqlalchemy import text
+
+from db_connection import get_db_connection
 
 
 def clean_wuenic_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -26,7 +29,7 @@ def clean_wuenic_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def ingest_wuenic(filepath: str):
     engine = get_db_connection()
-    df = pd.read_excel("data/wuenic_input.xlsx", sheet_name="wuenic_master")
+    df = pd.read_excel(filepath, sheet_name="wuenic_master")
     df = clean_wuenic_data(df)
 
     with engine.begin() as conn:

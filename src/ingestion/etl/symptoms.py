@@ -1,22 +1,29 @@
+"""ETL de sintomas/doenças: ficheiros CSV para PostgreSQL (doenças, sintomas, mapeamentos, precauções)."""
+
 import pandas as pd
-from db_connection import get_db_connection  # Uses your existing utility
 from dotenv import load_dotenv
 
-# Carregar variÃ¡veis de ambiente
-load_dotenv("/Users/matildefernandes/Desktop/PEC/ProjetoEC/.env")
+from db_connection import get_db_connection
+
+load_dotenv()
 
 
-def ingest_data():
+def ingest_data(
+    symptom_description_path="symptom_Description.csv",
+    symptom_precaution_path="symptom_precaution.csv",
+    symptom_severity_path="Symptom-severity.csv",
+    dataset_path="dataset.csv",
+):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # 1. Load CSVs
-    df_desc = pd.read_csv("symptom_Description.csv")
-    df_prec = pd.read_csv("symptom_precaution.csv")
-    df_sev = pd.read_csv("Symptom-severity.csv")
-    df_mapping = pd.read_csv("dataset.csv")
+    # 1. Carregar CSVs
+    df_desc = pd.read_csv(symptom_description_path)
+    df_prec = pd.read_csv(symptom_precaution_path)
+    df_sev = pd.read_csv(symptom_severity_path)
+    df_mapping = pd.read_csv(dataset_path)
 
-    # 2. Ingest Diseases and Descriptions
+    # 2. Ingestão de doenças e descrições
     for _, row in df_desc.iterrows():
         cur.execute(
             (
@@ -27,7 +34,7 @@ def ingest_data():
             (row["Disease"].strip(), row["Description"]),
         )
 
-    # 3. Ingest Symptoms and Severities
+    # 3. Ingestão de sintomas e respetivas severidades
     for _, row in df_sev.iterrows():
         cur.execute(
             (
@@ -38,21 +45,17 @@ def ingest_data():
             (row["Symptom"].strip().replace("_", " "), row["weight"]),
         )
 
-    # 4. Ingest Disease-Symptom Mappings
-    # We unpivot the 17 symptom columns into a clean list
+    # 4. Ingestão dos mapeamentos doença‑sintoma
     for _, row in df_mapping.iterrows():
         disease_name = row["Disease"].strip()
-        # Get disease_id
         cur.execute("SELECT disease_id FROM diseases WHERE name = %s", (disease_name,))
         res = cur.fetchone()
         if res:
             disease_id = res[0]
-            # Loop through symptom columns (Symptom_1 to Symptom_17)
             for i in range(1, 18):
                 s_name = row[f"Symptom_{i}"]
                 if pd.notna(s_name):
                     s_name = s_name.strip().replace("_", " ")
-                    # Ensure symptom exists and get ID
                     cur.execute("SELECT symptom_id FROM symptoms WHERE name = %s", (s_name,))
                     s_res = cur.fetchone()
                     if s_res:
@@ -65,7 +68,7 @@ def ingest_data():
                             (disease_id, s_res[0]),
                         )
 
-    # 5. Ingest Precautions
+    # 5. Ingestão de precauções
     for _, row in df_prec.iterrows():
         cur.execute("SELECT disease_id FROM diseases WHERE name = %s", (row["Disease"].strip(),))
         res = cur.fetchone()
@@ -82,7 +85,7 @@ def ingest_data():
     conn.commit()
     cur.close()
     conn.close()
-    print("Ingestion completed successfully!")
+    print("Ingestão concluída com sucesso!")
 
 
 if __name__ == "__main__":

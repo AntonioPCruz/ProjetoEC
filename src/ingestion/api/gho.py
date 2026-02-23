@@ -1,6 +1,6 @@
 """
-GHO (Global Health Observatory) API ingestion.
-Fetches indicators, dimensions, and dimension values; stores them in MongoDB.
+Ingestão da API GHO (Global Health Observatory).
+Obtém indicadores, dimensões e valores de dimensão e guarda-os em MongoDB.
 """
 
 import os
@@ -21,7 +21,7 @@ COLLECTION_DIMENSIONS = "gho_dimensions"
 
 
 def _mongo_config():
-    """Return current MongoDB config (password masked) for debugging."""
+    """Devolve a configuração atual do MongoDB (palavra‑passe mascarada) para debugging."""
     return {
         "MONGO_HOST": os.getenv("MONGO_HOST", "localhost"),
         "MONGO_PORT": os.getenv("MONGO_PORT", "27017"),
@@ -32,7 +32,7 @@ def _mongo_config():
 
 
 def get_mongo_db():
-    """Return MongoDB database instance using env config."""
+    """Devolve uma instância de base de dados MongoDB usando a configuração do ambiente."""
     client = MongoClient(
         host=os.getenv("MONGO_HOST", "localhost"),
         port=int(os.getenv("MONGO_PORT", "27017")),
@@ -45,33 +45,33 @@ def get_mongo_db():
 
 def verify_mongo_connection(db=None) -> tuple[bool, str]:
     """
-    Verify MongoDB connection: ping server and list collections.
-    Returns (success: bool, message: str). Useful for debugging connection issues.
+    Verifica a ligação ao MongoDB: faz ping ao servidor e lista coleções.
+    Devolve (sucesso: bool, mensagem: str). Útil para diagnosticar problemas de ligação.
     """
     try:
         if db is None:
             db = get_mongo_db()
-        # Force a round-trip to the server (ping)
+        # Força um round-trip ao servidor (ping)
         db.client.admin.command("ping")
-        # Optional: list collections to ensure we can read from the database
+        # Opcional: lista coleções para garantir que conseguimos ler da base de dados
         _ = list(db.list_collection_names())
-        return True, "MongoDB connection OK (ping + list_collections succeeded)."
+        return True, "Ligação ao MongoDB OK (ping + list_collections bem‑sucedidos)."
     except ServerSelectionTimeoutError as e:
         return False, (
-            f"MongoDB connection failed (timeout): {e}. "
-            "Check MONGO_HOST, MONGO_PORT, network, and that MongoDB is running."
+            f"Falha na ligação ao MongoDB (timeout): {e}. "
+            "Verifica MONGO_HOST, MONGO_PORT, a rede e se o serviço MongoDB está a correr."
         )
     except OperationFailure as e:
         return False, (
-            f"MongoDB auth or command failed: {e}. "
-            "Check MONGO_USER and MONGO_PASSWORD (and that the user exists in the DB)."
+            f"Falha de autenticação/comando no MongoDB: {e}. "
+            "Verifica MONGO_USER e MONGO_PASSWORD (e se o utilizador existe na BD)."
         )
     except Exception as e:
-        return False, f"MongoDB connection error: {type(e).__name__}: {e}"
+        return False, f"Erro de ligação ao MongoDB: {type(e).__name__}: {e}"
 
 
 def fetch_indicators() -> list[dict]:
-    """Fetch all indicators from GHO API."""
+    """Obtém todos os indicadores a partir da API GHO."""
     url = f"{GHO_BASE_URL}/Indicator"
     resp = requests.get(url, timeout=30)
     resp.raise_for_status()
@@ -80,7 +80,7 @@ def fetch_indicators() -> list[dict]:
 
 
 def fetch_dimensions() -> list[dict]:
-    """Fetch all dimensions from GHO API."""
+    """Obtém todas as dimensões a partir da API GHO."""
     url = f"{GHO_BASE_URL}/Dimension"
     resp = requests.get(url, timeout=30)
     resp.raise_for_status()
@@ -89,7 +89,7 @@ def fetch_dimensions() -> list[dict]:
 
 
 def fetch_dimension_values(dimension_code: str) -> list[dict]:
-    """Fetch dimension values for a given dimension code."""
+    """Obtém os valores de dimensão para um determinado código de dimensão."""
     url = f"{GHO_BASE_URL}/DIMENSION/{dimension_code}/DimensionValues"
     resp = requests.get(url, timeout=30)
     resp.raise_for_status()
@@ -99,17 +99,18 @@ def fetch_dimension_values(dimension_code: str) -> list[dict]:
 
 def ingest_to_mongo(db=None, skip_connection_check: bool = False):
     """
-    Fetch all GHO data and store in MongoDB collections.
-    Uses collections:
+    Obtém todos os dados GHO e guarda‑os em coleções MongoDB.
+    Utiliza as coleções:
       - gho_indicators
       - gho_dimensions
-      - one collection per dimension values set, e.g.:
+      - uma coleção por conjunto de valores de dimensão, por exemplo:
           gho_country_dimension_values, gho_agegroup_dimension_values, ...
 
-    Before inserting new dimension values, all existing collections that match
-    the pattern gho_*_dimension_values are dropped to avoid stale data.
+    Antes de inserir novos valores de dimensão, são apagadas todas as coleções
+    existentes que correspondam ao padrão gho_*_dimension_values, para evitar dados obsoletos.
 
-    If skip_connection_check is False (default), verifies DB connection first and exits on failure.
+    Se skip_connection_check for False (predefinição), verifica primeiro a ligação à BD
+    e termina em caso de falha.
     """
     if db is None:
         db = get_mongo_db()
@@ -119,7 +120,7 @@ def ingest_to_mongo(db=None, skip_connection_check: bool = False):
         if not ok:
             print("ERROR:", msg, file=sys.stderr)
             sys.exit(1)
-        print("[DEBUG] DB connection verified.")
+        print("[DEBUG] Ligação ao MongoDB verificada.")
 
     # 1. Indicators
     indicators = fetch_indicators()
@@ -140,20 +141,20 @@ def ingest_to_mongo(db=None, skip_connection_check: bool = False):
         code = dim.get("Code")
         if not code:
             continue
-        # Normalize code to build collection name, e.g. "Country" -> "gho_country_dimension_values"
+        # Normaliza o código para construir o nome da coleção, e.g. "Country" -> "gho_country_dimension_values"
         safe_code = str(code).strip().lower().replace(" ", "_")
         collection_name = f"gho_{safe_code}_dimension_values"
         try:
             values = fetch_dimension_values(code)
             for v in values:
-                v["_dimension_code"] = code  # allow filtering by dimension
+                v["_dimension_code"] = code  # permite filtrar por dimensão
             if values:
                 coll_dim_values = db[collection_name]
                 coll_dim_values.delete_many({})
                 coll_dim_values.insert_many(values)
                 total_dim_values += len(values)
         except requests.RequestException:
-            # skip dimension if request fails
+            # Ignora esta dimensão se o pedido falhar
             continue
 
     return {
@@ -164,11 +165,11 @@ def ingest_to_mongo(db=None, skip_connection_check: bool = False):
 
 
 if __name__ == "__main__":
-    print("[DEBUG] MongoDB config:", _mongo_config())
+    print("[DEBUG] Configuração MongoDB:", _mongo_config())
     ok, msg = verify_mongo_connection()
     print("[DEBUG]", msg)
     if not ok:
-        print("Aborting: fix the connection and run again.", file=sys.stderr)
+        print("A abortar: corrige a ligação e volta a executar.", file=sys.stderr)
         sys.exit(1)
     result = ingest_to_mongo()
-    print("Ingestion done:", result)
+    print("Ingestão concluída:", result)
