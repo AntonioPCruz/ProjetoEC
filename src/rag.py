@@ -2,7 +2,6 @@ import chromadb
 from ollama import Client as OllamaClient
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
-
 COLLECTION_NAME = "pmc_medicine_preventive"
 embbeding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 reranker = CrossEncoder("BAAI/bge-reranker-base")

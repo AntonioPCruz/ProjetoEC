@@ -1,6 +1,6 @@
 import chromadb
-from sentence_transformers import SentenceTransformer, CrossEncoder
 import ollama
+from sentence_transformers import CrossEncoder, SentenceTransformer
 
 COLLECTION_NAME = "pmc_medicine_preventive"
 
