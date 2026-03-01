@@ -25,7 +25,7 @@ COLLECTION_NAME = "pmc_medicine_preventive"
 embbeding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 
 # Ligação ao ChromaDB
-client = chromadb.HttpClient(host="localhost", port=8000)
+client = chromadb.HttpClient(host="localhost", port=8001)
 print(client.list_collections())  # Lista coleções
 
 if COLLECTION_NAME in [c.name for c in client.list_collections()]:
