@@ -6,7 +6,6 @@ from db_connection import get_db_connection
 from dotenv import load_dotenv
 from psycopg2.extras import execute_values
 
-# Carregar variáveis de ambiente
 load_dotenv()
 
 
@@ -16,10 +15,8 @@ def ingest_brfss(csv_path):
         return
 
     print("A carregar dataset BRFSS... (isto pode demorar dependendo do tamanho)")
-    # low_memory=False é importante devido à mistura de tipos nas centenas de colunas
     df = pd.read_csv(csv_path, low_memory=False)
 
-    # Mapeamento completo baseado no teu schema de diagnósticos e indicadores
     cols_map = {
         "_state": "state_code",
         "seqno": "sequence_no",
@@ -42,6 +39,9 @@ def ingest_brfss(csv_path):
         "smoke100": "smoke_100",
         "_rfbing6": "alcohol_binge",
         "exerany2": "exercise_any",
+        # Rastreio de Diabetes
+        "pdiabts1": "last_glucose_test",
+        "chkhemo3": "hba1c_check_freq",
         # Auto-avaliação e Biometria
         "genhlth": "general_health",
         "physhlth": "physical_health_days",
@@ -51,44 +51,33 @@ def ingest_brfss(csv_path):
         "_bmi5": "bmi",
     }
 
-    # Filtrar apenas as colunas que realmente existem no ficheiro
     available_cols = [c for c in cols_map.keys() if c in df.columns]
     df_final = df[available_cols].rename(columns=cols_map)
-
     print(f"Campos mapeados: {len(df_final.columns)} de {len(cols_map)}")
 
-    # --- Limpeza e Transformação de Dados ---
-
-    # 1. O BRFSS armazena IMC e Peso com duas casas decimais implícitas (ex: 2856 significa 28.56)
+    # Limpeza e Transformação
     if "bmi" in df_final.columns:
         df_final["bmi"] = pd.to_numeric(df_final["bmi"], errors="coerce") / 100
-
     if "weight_kg" in df_final.columns:
         df_final["weight_kg"] = pd.to_numeric(df_final["weight_kg"], errors="coerce") / 100
 
-    # 2. Converter outras colunas para numérico (tratar strings vazias ou erros)
     for col in df_final.columns:
         if col not in ["bmi", "weight_kg"]:
             df_final[col] = pd.to_numeric(df_final[col], errors="coerce")
 
-    # 3. No BRFSS, 7 e 9 costumam significar "Não sabe" ou "Recusou".
-    # Dependendo da análise, podes querer manter ou transformar em NULL.
-    # Aqui substituímos NaNs por None para o psycopg2 inserir como NULL.
     df_final = df_final.replace({np.nan: None})
 
-    # --- Inserção na Base de Dados ---
-
+    # Inserção
     conn = get_db_connection()
     cur = conn.cursor()
 
     columns = list(df_final.columns)
     insert_query = f"""
-        INSERT INTO brfss_responses ({", ".join(columns)}) 
-        VALUES %s 
+        INSERT INTO brfss_responses ({", ".join(columns)})
+        VALUES %s
         ON CONFLICT (sequence_no) DO NOTHING
     """
 
-    # Converter para lista de tuplos
     data_tuples = [tuple(x) for x in df_final.to_numpy()]
 
     try:
@@ -104,5 +93,7 @@ def ingest_brfss(csv_path):
 
 
 if __name__ == "__main__":
-    # Substitui pelo nome correto do teu ficheiro CSV
-    ingest_brfss("/Users/matildefernandes/Desktop/PEC/BRFSS2023.csv")
+    import sys
+
+    path = sys.argv[1] if len(sys.argv) > 1 else "BRFSS2023.csv"
+    ingest_brfss(path)

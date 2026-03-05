@@ -18,6 +18,7 @@ webdriver-manager
 lxml
 trafilatura
 tqdm
+pypdf
 
 # Embeddings (ChromaDB)
 sentence-transformers

@@ -150,3 +150,25 @@ CREATE TABLE IF NOT EXISTS immunization_fact (
     anomaly_flag BOOLEAN DEFAULT FALSE,
     UNIQUE(country_id, vaccine_id, year)
 );
+
+CREATE TABLE IF NOT EXISTS drugs_side_effects (
+    id SERIAL PRIMARY KEY,
+    drug_name TEXT,
+    medical_condition TEXT,
+    side_effects TEXT,
+    generic_name TEXT,
+    drug_classes TEXT,
+    brand_names TEXT,
+    activity TEXT,
+    rx_otc TEXT,
+    pregnancy_category TEXT,
+    csa TEXT,
+    alcohol TEXT,
+    related_drugs TEXT,
+    medical_condition_description TEXT,
+    rating NUMERIC,
+    no_of_reviews INTEGER,
+    drug_link TEXT,
+    medical_condition_url TEXT,
+    UNIQUE (drug_name, medical_condition)
+);
