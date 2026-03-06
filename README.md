@@ -13,6 +13,26 @@
     ```
 3. **Aceder à Aplicação ficará disponível em:** http://localhost:8501
 
+## Instalar o LLM (gemma3:4b) no Container
+1. **Identificar o Container:**
+      ```console
+   docker ps
+   ```
+2. **Entrar no Container:**
+      ```console
+   docker exec -it <nome_do_container_ollama> bash
+   ```
+3. **Instalar o Modelo:**
+    ```console
+   ollama pull gemma3:4b
+   ```
+4. **Confirmar a Instalação:**
+    ```console
+   ollama list
+   ```
+
+
+
 ## Qualidade de Código (Linter)
 Para validar a conformidade do código com as normas PEP8 através do container da aplicação:
 
