@@ -31,15 +31,6 @@
    ollama list
    ```
 
-
-
-## Qualidade de Código (Linter)
-Para validar a conformidade do código com as normas PEP8 através do container da aplicação:
-
-```console
-docker-compose run app flake8 .
-```
-
 ## Integração do dataset WUENIC
 
 Para ingerir o dataset WUENIC:
