@@ -1,8 +1,9 @@
+import os
+
+import requests
 import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
-import requests
-import os
 
 from utils.db_connection import test_nosql, test_sql, test_vector
 
@@ -93,7 +94,10 @@ def chat_page():
             timeout=120,
         )
 
-        response = r.json()["response"]
+        if r.status_code != 200:
+            response = f"Erro da API: {r.status_code} - {r.text}"
+        else:
+            response = r.json()["response"]
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 

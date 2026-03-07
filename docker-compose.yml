@@ -10,6 +10,7 @@ services:
       - db_vector
     volumes:
       - ./data:/app/data
+      - ./src:/app/src
 
   db_sql:
     image: postgres:16
@@ -30,6 +31,10 @@ services:
     ports:
       - "8500:8500"
     env_file: .env
+    volumes:
+      - ./src/api:/app/api
+      - ./src/rag:/app/rag
+      - ./src/agents:/app/agents
     depends_on:
       - db_sql
       - db_nosql
