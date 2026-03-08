@@ -1,3 +1,6 @@
+import os
+
+import requests
 import streamlit as st
 from dotenv import load_dotenv
 from PIL import Image
@@ -83,7 +86,18 @@ def chat_page():
             st.markdown(prompt)
 
         # ---- Aqui entra a lógica do chatbot (mock por agora) ----
-        response = f"Recebi a tua mensagem: **{prompt}**"
+        API_URL = f"http://{os.getenv('API_HOST')}:{os.getenv('API_PORT')}/chat/"
+
+        r = requests.post(
+            API_URL,
+            json={"message": prompt},
+            timeout=120,
+        )
+
+        if r.status_code != 200:
+            response = f"Erro da API: {r.status_code} - {r.text}"
+        else:
+            response = r.json()["response"]
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 

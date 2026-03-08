@@ -10,6 +10,7 @@ services:
       - db_vector
     volumes:
       - ./data:/app/data
+      - ./src:/app/src
 
   db_sql:
     image: postgres:16
@@ -23,6 +24,22 @@ services:
     ports:
       - "${SQL_PORT}:5432"
 
+  api:
+    build: 
+      context: .
+      dockerfile: src/api/Dockerfile
+    ports:
+      - "8500:8500"
+    env_file: .env
+    volumes:
+      - ./src/api:/app/api
+      - ./src/rag:/app/rag
+      - ./src/agents:/app/agents
+    depends_on:
+      - db_sql
+      - db_nosql
+      - db_vector
+
   db_nosql:
     image: mongo:latest
     ports:
@@ -33,6 +50,13 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DB}
     volumes:
       - mongo_data:/data/db
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
 
   db_vector:
     image: chromadb/chroma:latest
@@ -47,3 +71,4 @@ volumes:
   postgres_data:
   mongo_data:
   chroma_data:
+  ollama_data:
