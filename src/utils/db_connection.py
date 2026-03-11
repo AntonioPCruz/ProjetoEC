@@ -1,6 +1,9 @@
 import os
 
 import chromadb
+from dotenv import load_dotenv
+
+load_dotenv()
 import psycopg2
 from pymongo import MongoClient
 
@@ -8,8 +11,11 @@ from pymongo import MongoClient
 # --- Testes de Conexão ---
 def test_sql():
     try:
+        host = os.getenv("SQL_HOST") or "localhost"
+        port = os.getenv("SQL_PORT") or "5432"
         conn = psycopg2.connect(
-            host=os.getenv("SQL_HOST"),
+            host=host,
+            port=port,
             database=os.getenv("SQL_DB"),
             user=os.getenv("SQL_USER"),
             password=os.getenv("SQL_PASSWORD"),
@@ -49,8 +55,11 @@ def test_vector():
 # --- Funções de Conexão ---
 def get_db_connection():
     """Retorna uma conexão com a base de dados PostgreSQL"""
+    host = os.getenv("SQL_HOST") or "localhost"
+    port = os.getenv("SQL_PORT") or "5432"
     return psycopg2.connect(
-        host=os.getenv("SQL_HOST"),
+        host=host,
+        port=port,
         database=os.getenv("SQL_DB"),
         user=os.getenv("SQL_USER"),
         password=os.getenv("SQL_PASSWORD"),
