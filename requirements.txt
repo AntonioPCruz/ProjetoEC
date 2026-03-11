@@ -29,3 +29,9 @@ PyYAML
 fastapi
 uvicorn
 pydantic
+
+# LangChain SQL tool
+langchain
+langchain-community
+langchain-ollama
+SQLAlchemy

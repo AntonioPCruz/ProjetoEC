@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 from agents.tool_selection_agent import select_tool
 from rag.pipeline import rag_answer
+from sql.sql_query_tool import sql_query
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -19,10 +20,11 @@ def chat(req: ChatRequest):
     if tool == "rag_answer":
         reply = rag_answer(req.message)
     elif tool == "both":
-        # RAG part only for now; SQL will be added later
-        reply = rag_answer(req.message)
+        rag_reply = rag_answer(req.message)
+        sql_reply = sql_query(req.message)
+        reply = f"Resposta RAG:\n{rag_reply}\n\nResposta SQL:\n{sql_reply}"
     elif tool == "sql_query":
-        reply = "[SQL tool not implemented yet]"
+        reply = sql_query(req.message)
     else:
         reply = "Desculpe, não consigo responder a essa pergunta."
 
