@@ -23,6 +23,7 @@ pypdf
 # Embeddings (ChromaDB)
 sentence-transformers
 ollama
+PyYAML
 
 #api
 fastapi

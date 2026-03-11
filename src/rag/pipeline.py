@@ -7,7 +7,7 @@ COLLECTION_NAME = "pmc_medicine_preventive"
 embedding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 reranker = CrossEncoder("BAAI/bge-reranker-base")
 
-chroma_client = chromadb.HttpClient(host="localhost", port=8000)
+chroma_client = chromadb.HttpClient(host="db_vector", port=8000)
 collection = chroma_client.get_or_create_collection(name=COLLECTION_NAME)
 
 LLM_MODEL = "gemma3:4b"
@@ -39,6 +39,7 @@ Contexto:
 Pergunta: {query}
 """
 
-    response = ollama.generate(model=LLM_MODEL, prompt=prompt)
+    client = ollama.Client(host="http://ollama:11434")
+    response = client.generate(model=LLM_MODEL, prompt=prompt)
 
     return response["response"]

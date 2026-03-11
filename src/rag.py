@@ -6,7 +6,7 @@ COLLECTION_NAME = "pmc_medicine_preventive"
 embbeding_model = SentenceTransformer("BAAI/bge-base-en-v1.5")
 reranker = CrossEncoder("BAAI/bge-reranker-base")
 
-client_chromadb = chromadb.HttpClient(host="localhost", port=8001)
+client_chromadb = chromadb.HttpClient(host="localhost", port=8000)
 collection = client_chromadb.get_or_create_collection(name=COLLECTION_NAME)
 llm_model = "gemma3:4b"
 ollama = OllamaClient(host="http://localhost:11434")
