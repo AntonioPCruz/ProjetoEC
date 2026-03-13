@@ -23,7 +23,7 @@ FORBIDDEN_KEYWORDS = [
 def load_prompt(yaml_path: str, key: str) -> str:
     """Lê um prompt específico do ficheiro YAML."""
     try:
-        with open(yaml_path, encoding="utf-8") as file:
+        with open(yaml_path, "r", encoding="utf-8") as file:
             prompts = yaml.safe_load(file)
             return prompts.get(key, "")
     except Exception as e:
@@ -76,6 +76,7 @@ def _build_postgres_uri() -> str:
 
 def sql_query(user_question: str) -> str:
     """Generate and run a safe SQL query from a natural-language question."""
+
     db = SQLDatabase.from_uri(_build_postgres_uri())
 
     llm = ChatOllama(
@@ -101,9 +102,7 @@ def sql_query(user_question: str) -> str:
 
     # 3. Validar SQL
     if not generated_sql or not _is_safe_query(generated_sql):
-        return (
-            f"Não consegui gerar uma query SQL segura (apenas SELECT é permitido). {generated_sql}"
-        )
+        return "Não consegui gerar uma query SQL segura (apenas SELECT é permitido)."
 
     print(f"Generated SQL:\n{generated_sql}\n")  # Debug: mostrar SQL gerada
     # 4. Executar SQL
@@ -122,9 +121,7 @@ def sql_query(user_question: str) -> str:
         return f"Resultados brutos (Erro ao carregar prompt de explicação): {result}"
 
     explain_prompt = exp_template.format(
-        user_question=user_question,
-        generated_sql=generated_sql,
-        result=result,
+        user_question=user_question, generated_sql=generated_sql, result=result
     )
 
     final = llm.invoke(explain_prompt)

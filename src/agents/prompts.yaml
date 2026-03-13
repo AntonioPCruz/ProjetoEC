@@ -51,6 +51,14 @@ system_prompt: |
   - "Explain asthma and show prevalence rates" → BOTH
   - "Hello" → NONE
 
+rag_prompt: |
+  Based on the information below, respond in the same language as the user's question in a clear and medically accurate manner.
+
+  Context:
+  {contexto}
+
+  Question: {query}
+
 sql_prompt: |
   You have access to the following database schema:
   {schema}
