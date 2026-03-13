@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 import ollama
 import yaml
@@ -10,11 +9,11 @@ OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://ollama:11434")
 
 def load_prompt(file_path="prompts.yaml", key="system_prompt") -> str:
     """Lê o ficheiro YAML e extrai o prompt correspondente."""
-    import os
+
     if not os.path.isabs(file_path):
         file_path = os.path.join(os.path.dirname(__file__), file_path)
     try:
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path, "r", encoding="utf-8") as file:
             prompts = yaml.safe_load(file)
             return prompts.get(key, "")
     except FileNotFoundError:

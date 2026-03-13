@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Interactive terminal test for tool selection agent.
+"""Interactive terminal test for tool selection agent.
 Run this to manually test the agent with your own questions.
 """
 

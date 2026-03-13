@@ -1,11 +1,11 @@
 import os
 
 import chromadb
+import psycopg2
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 load_dotenv()
-import psycopg2
-from pymongo import MongoClient
 
 
 # --- Testes de Conexão ---

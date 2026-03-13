@@ -52,19 +52,19 @@ system_prompt: |
   - "Hello" → NONE
 
 sql_prompt: |
-  Tens acesso ao seguinte schema da base de dados:
+  You have access to the following database schema:
   {schema}
 
-  Pergunta do utilizador:
+  User question:
   {user_question}
 
-  Analisa a pergunta do utilizador e usa apenas as tabelas e colunas relevantes do schema acima. Faz joins se necessário. Devolve apenas o código SQL necessário, sem explicações ou comentários.
+  Analyze the user's question and use only the relevant tables and columns from the schema above. Join tables if necessary. Return only the required SQL code, without explanations or comments.
 
 sql_explanation_prompt: |
-  Responde em português europeu de forma breve e clara. 
-  Com base na pergunta e nos resultados SQL, dá a resposta final ao utilizador.
+  Respond briefly and clearly in the same language as the user's question.
+  Based on the user's question and the SQL results, provide the final answer to the user.
   
-  Pergunta: {user_question}
-  SQL executado: {generated_sql}
-  Resultados da Base de Dados: {result}
+  Question: {user_question}
+  SQL executed: {generated_sql}
+  Database Results: {result}
   
