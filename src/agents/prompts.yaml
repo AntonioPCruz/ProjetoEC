@@ -26,7 +26,7 @@ system_prompt: |
      - Specific numbers, rates, percentages, counts
      - Statistics by location, year, age group, or gender
      - Drug names, side effects, dosages, or ratings
-     - Symptom severity or disease-symptom relationships
+     - Symptoms: For any question about symptoms (including severity, description, precaution, or symptom-disease relationships)
      - Prevalence/incidence in specific populations
      - Vaccination coverage or healthcare metrics
      - Comparisons between countries or time periods
@@ -60,13 +60,18 @@ rag_prompt: |
   Question: {query}
 
 sql_prompt: |
+  You are a PostgreSQL expert.
   You have access to the following database schema:
   {schema}
 
-  User question:
-  {user_question}
+  Rules:
+    - Use ONLY the provided tables and columns.
+    - For string comparisons in WHERE clauses, ALWAYS use 'ILIKE' instead of '=' to ensure case-insensitive matching (e.g., column ILIKE 'value').
+    - Return ONLY the SQL code.
+    - If the user question contains symptoms or medical terms in another language (e.g., "febre"), ALWAYS translate them to English before generating the SQL query.
 
-  Analyze the user's question and use only the relevant tables and columns from the schema above. Join tables if necessary. Return only the required SQL code, without explanations or comments.
+  User question: {user_question}
+  SQLQuery:
 
 sql_explanation_prompt: |
   Respond briefly and clearly in the same language as the user's question.
