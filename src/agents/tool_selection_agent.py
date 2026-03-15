@@ -36,5 +36,7 @@ def select_tool(user_question: str) -> dict:
         return {"tool": "rag_answer", "query": user_question}
     elif "SQL" in answer:
         return {"tool": "sql_query", "query": user_question}
+    elif "MONGO" in answer:
+        return {"tool": "mongo_query", "query": user_question}
     else:
         return {"tool": None, "query": user_question}
