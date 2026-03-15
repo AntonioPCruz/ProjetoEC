@@ -11,15 +11,13 @@ FAQ = {
         "Posso ajudá-lo a esclarecer dúvidas de saúde e medicina preventiva. "
         "⚠️ Esta informação é educativa e não substitui consulta com profissional de saúde."
     ),
-
     ("o que fazes", "para que serves", "qual a tua função"): (
         "Respondo a perguntas médicas com base em literatura científica, diretrizes clínicas e dados estruturados."
     ),
-
     ("como funcionas", "como funcionas tu", "como trabalhas"): (
         "Utilizo um sistema RAG que pesquisa documentos médicos confiáveis e consulto bases de dados antes de gerar respostas. "
         "As respostas são fornecidas com base em evidência científica e informações estruturadas."
-    )
+    ),
 }
 
 
@@ -36,7 +34,7 @@ NON_MEDICAL_EXAMPLES = [
     "melhor filme de 2024",
     "receita de bolo",
     "restaurantes em lisboa",
-    "resultado do futebol"
+    "resultado do futebol",
 ]
 
 
@@ -58,6 +56,7 @@ def check_faq(query: str):
         if any(k in q for k in keys):
             return answer
     return None
+
 
 def check_domain(query: str):
 
@@ -84,7 +83,7 @@ def apply_rules(query: str):
     result = check_faq(query)
     if result:
         return result
-    
+
     result = check_domain(query)
     if result:
         return result
