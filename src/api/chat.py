@@ -30,7 +30,7 @@ def chat(req: ChatRequest):
         sql_reply = sql_query(req.message)
         reply = f"Resposta RAG:\n{rag_reply}\n\nResposta SQL:\n{sql_reply}"
     elif tool == "sql_query":
-        reply = "[SQL tool not implemented yet]"
+        reply = sql_query(req.message)
     elif tool == "mongo_query":
         reply = mongo_query(req.message)
     else:
