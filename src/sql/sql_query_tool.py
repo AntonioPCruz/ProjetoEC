@@ -73,6 +73,7 @@ def _build_postgres_uri() -> str:
 
     return f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
 
+
 def get_slim_schema(db):
     """
     Retorna um schema minimalista para economizar tokens.
@@ -81,13 +82,14 @@ def get_slim_schema(db):
     # Acessa o dicionário de tabelas do SQLAlchemy internamente
     metadata = db._metadata.tables
     slim_schema = []
-    
+
     for table_name, table_obj in metadata.items():
         # Pega apenas os nomes das colunas, sem tipos ou constraints pesadas
         col_names = [col.name for col in table_obj.columns]
         slim_schema.append(f"{table_name} ({', '.join(col_names)})")
     print(f"Slim schema:\n{slim_schema}\n")  # Debug: mostrar schema minimalista
     return "\n".join(slim_schema)
+
 
 def sql_query(user_question: str) -> str:
     """Generate and run a safe SQL query from a natural-language question."""
