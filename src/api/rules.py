@@ -12,16 +12,15 @@ FAQ = {
         "⚠️ Esta informação é educativa e não substitui consulta com profissional de saúde."
     ),
     ("o que fazes", "para que serves", "qual a tua função"): (
-    "Respondo a perguntas médicas com base em literatura científica, "
-    "diretrizes clínicas e dados estruturados."
+        "Respondo a perguntas médicas com base em literatura científica, "
+        "diretrizes clínicas e dados estruturados."
     ),
-
     ("como funcionas", "como funcionas tu", "como trabalhas"): (
-    "Utilizo um sistema RAG que pesquisa documentos médicos confiáveis "
-    "e consulto bases de dados antes de gerar respostas. "
-    "As respostas são fornecidas com base em evidência científica "
-    "e informações estruturadas."
-),
+        "Utilizo um sistema RAG que pesquisa documentos médicos confiáveis "
+        "e consulto bases de dados antes de gerar respostas. "
+        "As respostas são fornecidas com base em evidência científica "
+        "e informações estruturadas."
+    ),
 }
 
 
