@@ -91,7 +91,7 @@ def chat_page():
         r = requests.post(
             API_URL,
             json={"message": prompt},
-            timeout=120,
+            timeout=600,
         )
 
         if r.status_code != 200:

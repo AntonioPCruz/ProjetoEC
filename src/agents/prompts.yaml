@@ -26,7 +26,7 @@ system_prompt: |
      - Specific numbers, rates, percentages, counts
      - Statistics by location, year, age group, or gender
      - Drug names, side effects, dosages, or ratings
-     - Symptom severity or disease-symptom relationships
+     - Symptoms: For any question about symptoms (including severity, description, precaution, or symptom-disease relationships)
      - Prevalence/incidence in specific populations
      - Vaccination coverage or healthcare metrics
      - Comparisons between countries or time periods
@@ -84,3 +84,34 @@ system_prompt: |
   - "Give me information about depression" → MONGO
   - "What is stroke?" → MONGO
   - "Hello" → NONE
+
+rag_prompt: |
+  Based on the information below, respond in the same language as the user's question in a clear and medically accurate manner.
+
+  Context:
+  {contexto}
+
+  Question: {query}
+
+sql_prompt: |
+  You are a PostgreSQL expert.
+  You have access to the following database schema:
+  {schema}
+
+  Rules:
+    - Use ONLY the provided tables and columns.
+    - For string comparisons in WHERE clauses, ALWAYS use 'ILIKE' instead of '=' to ensure case-insensitive matching (e.g., column ILIKE 'value').
+    - Return ONLY the SQL code.
+    - If the user question contains symptoms or medical terms in another language (e.g., "febre"), ALWAYS translate them to English before generating the SQL query.
+
+  User question: {user_question}
+  SQLQuery:
+
+sql_explanation_prompt: |
+  Respond briefly and clearly in the same language as the user's question.
+  Based on the user's question and the SQL results, provide the final answer to the user.
+  
+  Question: {user_question}
+  SQL executed: {generated_sql}
+  Database Results: {result}
+  

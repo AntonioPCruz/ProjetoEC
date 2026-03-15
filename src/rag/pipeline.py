@@ -1,5 +1,8 @@
+import os
+
 import chromadb
 import ollama
+import yaml
 from sentence_transformers import CrossEncoder, SentenceTransformer
 
 COLLECTION_NAME = "pmc_medicine_preventive"
@@ -11,6 +14,10 @@ chroma_client = chromadb.HttpClient(host="db_vector", port=8000)
 collection = chroma_client.get_or_create_collection(name=COLLECTION_NAME)
 
 LLM_MODEL = "gemma3:4b"
+
+# Carregar rag_prompt do prompts.yaml
+agents_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "agents"))
+prompts_path = os.path.join(agents_dir, "prompts.yaml")
 
 
 def rag_answer(query: str) -> str:
@@ -30,14 +37,14 @@ def rag_answer(query: str) -> str:
 
     contexto = "\n".join(ranked_docs[:3])
 
-    prompt = f"""
-Baseando-se nas informações abaixo, responda em português de forma médica e clara.
+    with open(prompts_path, encoding="utf-8") as file:
+        prompts = yaml.safe_load(file)
+        rag_template = prompts.get("rag_prompt", "")
 
-Contexto:
-{contexto}
+    if not rag_template:
+        raise RuntimeError("RAG prompt template not found in prompts.yaml")
 
-Pergunta: {query}
-"""
+    prompt = rag_template.format(contexto=contexto, query=query)
 
     client = ollama.Client(host="http://ollama:11434")
     response = client.generate(model=LLM_MODEL, prompt=prompt)

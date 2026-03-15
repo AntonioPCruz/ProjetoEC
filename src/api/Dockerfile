@@ -14,6 +14,7 @@ RUN pip install --upgrade pip \
 COPY src/api ./api
 COPY src/rag ./rag
 COPY src/agents ./agents
+COPY src/sql ./sql
 
 # Expõe a porta do FastAPI
 EXPOSE 8500
