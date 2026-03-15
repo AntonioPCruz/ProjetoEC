@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from agents.mongo_tool import mongo_query
 from agents.tool_selection_agent import select_tool
 from api.rules import apply_rules
 from rag.pipeline import rag_answer
@@ -28,6 +29,8 @@ def chat(req: ChatRequest):
         reply = rag_answer(req.message)
     elif tool == "sql_query":
         reply = "[SQL tool not implemented yet]"
+    elif tool == "mongo_query":
+        reply = mongo_query(req.message)
     else:
         reply = "Desculpe, não consigo responder a essa pergunta."
 
