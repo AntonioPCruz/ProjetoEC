@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from agents.tool_selection_agent import select_tool
+from api.rules import apply_rules
 from rag.pipeline import rag_answer
 
 router = APIRouter(prefix="/chat", tags=["chat"])
@@ -13,6 +14,10 @@ class ChatRequest(BaseModel):
 
 @router.post("/")
 def chat(req: ChatRequest):
+    rule_response = apply_rules(req.message)
+    if rule_response:
+        return {"response": rule_response}
+
     decision = select_tool(req.message)
     tool = decision["tool"]
 

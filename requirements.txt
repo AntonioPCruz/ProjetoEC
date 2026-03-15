@@ -24,6 +24,7 @@ pypdf
 sentence-transformers
 ollama
 PyYAML
+scikit-learn
 
 #api
 fastapi
