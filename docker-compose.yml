@@ -35,6 +35,8 @@ services:
       - ./src/api:/app/api
       - ./src/rag:/app/rag
       - ./src/agents:/app/agents
+      - ./src/utils:/app/utils
+      - ./src/medlineplus_ingestion.py:/app/medlineplus_ingestion.py
     depends_on:
       - db_sql
       - db_nosql
